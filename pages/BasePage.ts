@@ -4,6 +4,7 @@ import {
   Capabilities,
   By,
   until,
+  WebElement,
 } from "selenium-webdriver";
 
 interface IOptions {
@@ -30,6 +31,12 @@ export class BasePage {
     await this.driver.wait(until.elementIsVisible(element));
     return element;
   }
+  async getElements(elementBy: By) {
+    await this.driver.wait(until.elementsLocated(elementBy));
+    const elements = await this.driver.findElements(elementBy);
+    await this.driver.wait(until.elementIsVisible(elements[0]));
+    return elements;
+  }
   async click(elementBy: By) {
     return (await this.getElement(elementBy)).click();
   }
@@ -41,7 +48,10 @@ export class BasePage {
   }
   async setInput(elementBy: By, keys: any) {
     const input = await this.getElement(elementBy);
-    await input.clear();
-    return input.sendKeys(keys);
+    return this.setWebElementInput(input, keys);
+  }
+  async setWebElementInput(element: WebElement, keys: any) {
+    await element.clear();
+    return element.sendKeys(keys);
   }
 }
